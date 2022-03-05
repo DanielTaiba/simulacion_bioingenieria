@@ -1,4 +1,5 @@
 import numpy as np
+import pandas as pd
 
 #funcion para crear matriz
 def crear_matriz(M,P):
@@ -88,28 +89,31 @@ def step(matriz,m,t1,t2,r,pm):
   #devolvemos la matriz resultante y la vecindad por si a caso
   return matriz+matriz_cambio,vecindad_asociada
 
+def write_csv(matriz,filename,colum,i):
+	M,N=matriz.shape
+	iteracion = np.zeros((1,N))
+	fila = np.array([[i for i in range(N)]]) 
+	pd.DataFrame(np.concatenate((iteracion+i,fila,matriz),axis=0).T,columns=colum).to_csv(filename,mode='a',index=False,header=False)
 
 if __name__ == '__main__':
   #parametros
-  M = 15
+  M = 32
   P = 0.08
   T1,T2 = 5,7 #T1 = phi1,T2 = phi2
   PM = 0.6
-  R = 3
-  iteraciones = 1000
+  R = 1
+  iteraciones = 100
 
 
-  #Simular
+  #Simular matriz inicial
   matriz = crear_matriz(M,P)
-  print('inicial\n',matriz)
 
-  print('cantidad de bacterias iniciales: ',np.argwhere(matriz==1).shape[0])
-  print('--------------------')
+  #iniciamos csv
+  filename = 'test.csv'
+  colum= ['iteracion','fila']+[str(i) for i in range(M)]
+  pd.DataFrame(columns=colum).to_csv(filename,mode='w',index=False)
+  write_csv(matriz,filename,colum,0)
 
   for i in range(iteraciones):
     matriz,vecinos = step(matriz,M,T1,T2,R,PM)
-    print('step',i,'\n',matriz) #se puede omitir esta linea
-    
-
-  print('final\n',matriz)
-  print('cantidad de bacterias final: ',np.argwhere(matriz==1).shape[0])
+    write_csv(matriz,filename,colum,i+1)
