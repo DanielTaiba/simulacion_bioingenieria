@@ -10,7 +10,7 @@ python3 main.py
 ```
 ## 3. se abrira en su navegador graficos interactivos
 ### Ejemplo:
-<img src="t1/example.png" alt="example" style="height: 500px; width:500px;"/>
+<img src="example.png" alt="example" style="height: 500px; width:500px;"/>
 
 # Ejecucion por parte: 
 ### Util para casos donde hay una simulacion de interes y solo se quiere cambiar la forma de graficar
