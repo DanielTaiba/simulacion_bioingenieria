@@ -64,14 +64,19 @@ def step(matriz,m,t1,t2,r,pm):
 
     """Regla A"""
     #elegimos una posicion al azar
-    choice = np.random.choice(posiciones.shape[0])
-    a1,b1=posiciones[choice,:]
+    try:
 
-    #almacenamos cambios
-    
-    if matriz[a1,b1]==0:#si la casilla no esta ocupada
-      matriz_cambio[a,b]=-1
-      matriz_cambio[a1,b1]=1
+      posiciones_validas = np.where((matriz[posiciones[:,0],posiciones[:,1]]==0)&(matriz_cambio[posiciones[:,0],posiciones[:,1]]<1))#seleccionamos solo aquellas posiciones que estan libres y aun no han sido asignadas
+      choice = np.random.choice(posiciones_validas[0])
+      a1,b1=posiciones[choice,:]
+
+      #almacenamos cambios
+      
+      if matriz[a1,b1]==0:#si la casilla no esta ocupada
+        matriz_cambio[a,b]=-1
+        matriz_cambio[a1,b1]=1
+    except: # si no hay espacios donde asignar, no hace nada
+      pass
 
     """se utiliza para regla B"""
     #contamos la cantidad de vecinos asociados a una celda
@@ -101,13 +106,13 @@ if __name__ == '__main__':
   P = 0.08
   T1,T2 = 5,7 #T1 = phi1,T2 = phi2
   PM = 0.6
-  R = 1
-  iteraciones = 100
+  R = 2
+  iteraciones = 1000
 
 
   #Simular matriz inicial
   matriz = crear_matriz(M,P)
-
+  print('bacterias iniciales: ',np.count_nonzero(matriz))
   #iniciamos csv
   filename = 'test.csv'
   colum= ['iteracion','fila']+[str(i) for i in range(M)]
@@ -117,3 +122,4 @@ if __name__ == '__main__':
   for i in range(iteraciones):
     matriz,vecinos = step(matriz,M,T1,T2,R,PM)
     write_csv(matriz,filename,colum,i+1)
+  print('bacterias finales: ',np.count_nonzero(matriz))
