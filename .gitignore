@@ -2,3 +2,5 @@ env/
 pruebas/
 *.zip
 __pycache__/
+*.csv
+experimentos/
