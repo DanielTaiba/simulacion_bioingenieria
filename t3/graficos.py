@@ -152,10 +152,10 @@ def animation(df,col):
 
 if __name__=='__main__':
     #parametros
-    num_simulacion = 1
+    num_simulacion = 10
     R=1
-    iteracion = 45 #que iteracion graficamos
-    filename = f'./experimentos/simulacion_{num_simulacion}.csv'
+    iteracion = 100 #que iteracion graficamos
+    filename = f'./experimentos2/simulacion_{num_simulacion}.csv'
 
     #cargamos los datos
     df = pd.read_csv(filename)
@@ -170,8 +170,9 @@ if __name__=='__main__':
     ###     valores en el intervalo [0.0,1.0] indica que no hay bacteria pero se le asigna una probabilidad calculada como (total de vecinos posibles/vecinos reales de la casilla)
     
     # grafico de una iteracion 
-    plot(df[df['iteracion']==iteracion],df.columns[2:],incluir_vecindad,'Matriz incial',R) #matriz 
-    plot(df[df['iteracion']==iteracion],df.columns[2:],False,'Matriz incial',R) #matriz  sin vecindad
+    # plot(df[df['iteracion']==iteracion],df.columns[2:],incluir_vecindad,'Matriz incial',R) #matriz 
+    plot(df[df['iteracion']==0],df.columns[2:],False,'Matriz incial',R) #matriz  sin vecindad
+    plot(df[df['iteracion']==iteracion],df.columns[2:],False,'Matriz final',R) #matriz  sin vecindad
     #subplots con una muestra general de las iteraciones
     subplots(df,jump_plots) 
     #animacion de la evolucion de iteraciones

@@ -85,7 +85,6 @@ class lab():
                 #cambiamos las celdas
                 self.matriz_actual[x,y] = 0
                 self.matriz_actual[x1,y1] = 1
-                #####cant_regla_A+=1
                 return 1
             except:
                 return 0
@@ -100,14 +99,29 @@ class lab():
         cant_vecinos= vecinos[0].size
         # si esta dentro de los parametros se agrega una bacteria
         if cant_vecinos>=self.t1 and cant_vecinos<=self.t2:
-            ######cant_regla_B+=1
             self.matriz_actual[x,y] = 1
             return 1
         else:
             return 0
 
     def regla_C(self,posicion,vecindad):
-        return 1
+        x,y=posicion
+        cambiar=np.array([True,False])
+      
+        if np.random.choice(cambiar,p=[self.prob_mov,1-self.prob_mov]):
+            #buscamos celdas vacias dentro de la vecindad para seleccionar una al azar (x1,y1)
+            posicion_valida = np.where((self.matriz_actual[vecindad[:,0],vecindad[:,1]]==0))
+            try: #intentamos seleccionar una posicion, pero puede suceder que esten todas ocupadas
+                choice = np.random.choice(posicion_valida[0])
+                x1,y1=vecindad[choice,:]
+                #cambiamos las celdas
+                self.matriz_actual[x1,y1] = 1
+                return 1
+            except:
+                return 0
+        
+        else:
+            return 0
 
     def step(self,rules):
         self.num_iteracion+=1
@@ -135,12 +149,13 @@ class lab():
                         cambios_C += self.regla_C(posicion=(x,y),vecindad=vecindad)
                 else:
                     print('no existe esta regla: ',rul)
-        
+    
         #update stats
         self.stats['cambios_regla_A'].append(cambios_A)
         self.stats['cambios_regla_B'].append(cambios_B)
         self.stats['cambios_regla_C'].append(cambios_C)
         self.stats['cantidad_bacterias'].append(np.count_nonzero(self.matriz_actual))
+        #escribit la matriz actual en un csv
         write_csv(
             self.matriz_actual,
             self.path+self.name_csv,
@@ -150,7 +165,7 @@ class lab():
 
 if __name__=='__main__':
     #nombre de la carpeta donde se guardará la info
-    dir = './experimentos/'
+    dir = './experimentos2/'
     if not os.path.exists(dir):
         os.makedirs(dir)
 
@@ -170,6 +185,7 @@ if __name__=='__main__':
             PM=0.05,
             T1=5,
             T2=7,
+            #no cambiar
             num_simulacion=i,
             path=dir
         )
@@ -178,7 +194,7 @@ if __name__=='__main__':
             #rules es una lista que hace referencia a la secuencia de reglas que utilizara en las iteraciones 
             ## ejemplo => rules = ['A','B'] indica que cada iteracion se ejecuta la regla A y luego la regla B
             ## ejemplo => rules = ['B','C'] indica que cada iteracion se ejecuta la regla B y luego la regla C
-            simulacion.step(rules = ['A','B'])
+            simulacion.step(rules = ['C','B'])
         
         writeJsonFile(simulacion.stats,fileName=dir+f'simulacion_{i}.json')
     
