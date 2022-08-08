@@ -224,9 +224,17 @@ if __name__ == '__main__':
     
     # cantidad de veces que se hará un experimento
     cantidad_simulaciones = 5
-    # cantidad de iteraciones que tendra cada experimento
-    cantidad_iteraciones = 20
-    cantidad_iteraciones_EV = 10
+    # cantidad de ciclos que tendra cada experimento
+    ciclo = {
+        'adicion_bacterias' : 3, #cuantas veces se hace la regla B "de corrido"
+        'eliminacion_bacterias' : 1, #cuantas veces se hace la regla E "de corrido"
+        'total_ciclos': 5 #cuantos ciclos de regla B y E se completan -> total iteraciones = (regla_B + regla_E)* total_ciclos
+    }
+
+    print(f"""OJO:
+    en total se realizaran {ciclo['total_ciclos'] * (ciclo['adicion_bacterias']+ciclo['eliminacion_bacterias'])} iteraciones por simulacion
+    """)
+
     # ciclo para experimento
     for i in range(1,cantidad_simulaciones+1):
         print ('simulacion',i,'...')
@@ -249,15 +257,13 @@ if __name__ == '__main__':
             num_simulacion=i,
             path=dir
         )
-        # ciclo para iterar
-        for _ in range(cantidad_iteraciones):
-            simulacion.step_paralelo()
-        
-        # ciclo para eliminar vecinos
-        for _ in range(cantidad_iteraciones_EV): 
-            simulacion.eliminacion_bacterias()
-        
+        for _ in range(ciclo['total_ciclos']):
+            #se van agregando bacterias en cada iteracion
+            [simulacion.step_paralelo() for _ in range(ciclo['adicion_bacterias'])]
+            #se eliminan bacterias en cada iteracion
+            [simulacion.eliminacion_bacterias() for _ in range(ciclo['eliminacion_bacterias'])]
+
         writeJsonFile(simulacion.stats,fileName=dir+f'simulacion_{i}.json')
     
     #datos de todos los experimentos como en el pedido 2
-    general_stats(dir,cantidad_simulaciones,cantidad_iteraciones+cantidad_iteraciones_EV)
+    general_stats(dir,cantidad_simulaciones,ciclo['total_ciclos'] * (ciclo['adicion_bacterias']+ciclo['eliminacion_bacterias']))
